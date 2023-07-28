@@ -1,9 +1,8 @@
 package org.example.services;
 
-import org.example.entities.ContactEntity;
+import org.example.entities.Contact;
 import org.example.repositories.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,26 +25,26 @@ public class ContactService {
 
     public boolean returnIfIdExist(String phone, String email)
     {
-        return contactRepository.doesContactExist(phone, email);
+        return contactRepository.existsByEmail(email) || contactRepository.existsByPhone(phone);
     }
 
     public Integer getIdFromMailPhone(String email, String phone)
     {
         return contactRepository.getMatchedId(email, phone);
     }
-    public ContactEntity saveOrUpdate(ContactEntity entity)
+    public Contact saveOrUpdate(Contact entity)
     {
         return contactRepository.save(entity);
     }
 
-    public List<ContactEntity> getAllContacts()
+    public List<Contact> getAllContacts()
     {
         return contactRepository.findAll();
     }
 
-    public ContactEntity getMatchedContact(Integer id)
+    public Contact getMatchedContact(Integer id)
     {
-        return contactRepository.getContactEntity(id);
+        return contactRepository.findById(id).orElse(null);
     }
 
     public boolean ifEmailExist(String email)

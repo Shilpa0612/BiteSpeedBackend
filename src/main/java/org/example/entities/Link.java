@@ -2,39 +2,41 @@ package org.example.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
-@Setter
 @Entity
 @Data
-public class LinkEntity {
+@Table (name = "link")
+public class Link {
 
     private String linkedPrecedence;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
+    @ElementCollection
     private List<String> email;
+    @ElementCollection
     private List<String> phone;
 
-    private Integer linkedId;//Foreign Key
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "id", referencedColumnName = "id")
-    private ContactEntity contact;
+    @JoinColumn(name = "linkedId", referencedColumnName = "id")
+    private Contact contact;
 
-    public LinkEntity()
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "linkedId", updatable = false,nullable = false)
+    private Integer linkedId;//Foreign Key
+    public Link()
     {
         email = new ArrayList<>();
         phone = new ArrayList<>();

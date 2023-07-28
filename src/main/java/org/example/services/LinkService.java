@@ -1,6 +1,6 @@
 package org.example.services;
 
-import org.example.entities.LinkEntity;
+import org.example.entities.Link;
 import org.example.repositories.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Query;
@@ -18,15 +18,15 @@ public class LinkService {
         this.linkRepository = linkRepository;
     }
 
-    public LinkEntity saveOrCreate(LinkEntity linkEntity)
+    public Link saveOrCreate(Link linkEntity)
     {
         return linkRepository.save(linkEntity);
     }
 
     @Query(value ="Select * from link where id = :id")
-    public List<LinkEntity> getAllLink(Integer id)
+    public List<Link> getAllLink(Integer id)
     {
-        return linkRepository.findAll();
+        return linkRepository.getAllLink(id);
     }
 
 

@@ -3,12 +3,12 @@ package org.example.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.dto.ContactDTO;
-import org.example.entities.ContactEntity;
-import org.example.entities.LinkEntity;
+import org.example.entities.Contact;
+import org.example.entities.Link;
 import org.example.services.ContactService;
 import org.example.services.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,17 +40,17 @@ public class ContactLinkController {
 
       if (ifExists) {
           Integer id = contactService.getIdFromMailPhone(email, phone);
-          ContactEntity contactEntity = contactService.getMatchedContact(id);
+          Contact contactEntity = contactService.getMatchedContact(id);
 
-          LinkEntity linkInstance = new LinkEntity();
+          Link linkInstance = new Link();
           linkInstance.setLinkedId(id);
           linkInstance.setCreatedAt(LocalDateTime.now());
           linkInstance.setUpdatedAt(LocalDateTime.now());
 
-          List<LinkEntity> linkList = linkService.getAllLink(id);
+          List<Link> linkList = linkService.getAllLink(id);
           if (contactService.ifEmailExist(email)) {
               List<String> emailList = linkList.stream()
-                      .map(LinkEntity::getEmail)
+                      .map(Link::getEmail)
                       .flatMap(List::stream)
                       .collect(Collectors.toList());
               if (!emailList.contains(email)) {
@@ -61,7 +61,7 @@ public class ContactLinkController {
 
           if (contactService.ifPhoneExist(phone)) {
               List<String> phoneList = linkList.stream()
-                      .map(LinkEntity::getPhone)
+                      .map(Link::getPhone)
                       .flatMap(List::stream)
                       .collect(Collectors.toList());
               if (!phoneList.contains(email)) {
@@ -73,7 +73,7 @@ public class ContactLinkController {
           linkService.saveOrCreate(linkInstance);
       } else {
 
-          ContactEntity contactInstance = new ContactEntity();
+          Contact contactInstance = new Contact();
           contactInstance.setPhone(phone);
           contactInstance.setCreatedAt(LocalDateTime.now());
           contactInstance.setUpdatedAt(LocalDateTime.now());
@@ -85,28 +85,28 @@ public class ContactLinkController {
 
     //public List<LinkEntity> getAllContactsWithLink() throws JsonProcessingException {
 
-        List<ContactEntity> contactEntities = contactService.getAllContacts();
+        List<Contact> contactEntities = contactService.getAllContacts();
 
         List<String> response = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
 
-        for(ContactEntity c: contactEntities)
+        for(Contact c: contactEntities)
         {
-            List<LinkEntity> linkEntities = linkService.getAllLink(c.getId());
+            List<Link> linkEntities = linkService.getAllLink(c.getId());
             String read = createResponse(c, linkEntities);
             response.add(read);
         }
         String jsonResponse = String.join(",", response);
-        return new ResponseEntity<>(jsonResponse, HttpStatusCode.valueOf(200));
+        return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
 
-    private String createResponse(ContactEntity contact, List<LinkEntity> list) throws JsonProcessingException {
+    private String createResponse(Contact contact, List<Link> list) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String primaryId = String.valueOf(contact.getId());
 
         List<String> emails = new ArrayList<>();
         List<String> phones = new ArrayList<>();
-        for(LinkEntity link : list)
+        for(Link link : list)
         {
             if(link.getLinkedPrecedence().equalsIgnoreCase("primary")){
                 emails.add(link.getEmail().toString());

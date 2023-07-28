@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Data
 @Table(name = "contact")
-public class ContactEntity {
+public class Contact {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
@@ -24,7 +24,7 @@ public class ContactEntity {
     LocalDateTime updatedAt;
     LocalDateTime deletedAt;
 
-    public ContactEntity ()
+    public Contact ()
     {
         deletedAt = null;
         linkedPrecedence = "primary";

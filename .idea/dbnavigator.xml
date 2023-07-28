@@ -51,11 +51,23 @@ id int primary key,
 email text,
 phone text,
 linkedId int default null,
-linkedPrecedence text default 'primary',
+linkedPrecedence varchar(20) default 'primary',
 createdAt datetime,
 deletedAt datetime default null,
 updatedAt dateTime
-);]]></console>
+);
+
+create table link(
+id int primary key,
+email text,
+phone text,
+linkedId int,
+createAt datetime,
+updatedAt datetime,
+deletedAt datetime default null,
+foreign key(linkedId) references contact(id)
+);
+desc link;]]></console>
     </connection>
     <connection id="35467f87-9ed6-4255-8a65-02ba5634d14c">
       <console name="Connection 2" type="STANDARD" schema="mysql" session="Main"><![CDATA[show databases;]]></console>
@@ -69,6 +81,9 @@ updatedAt dateTime
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
+  </component>
+  <component name="DBNavigator.Project.FileConnectionMappingManager">
+    <mapping file-url="file://$PROJECT_DIR$/Connection 1.sql" connection-id="7ffa58ed-aa6d-42a2-9b12-af2d954ab04b" session-id="MAIN" current-schema="mysql" />
   </component>
   <component name="DBNavigator.Project.ObjectQuickFilterManager">
     <last-used-operator value="EQUAL" />
