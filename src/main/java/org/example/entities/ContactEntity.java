@@ -1,17 +1,18 @@
 package org.example.entities;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 
-@Getter
-@Setter
 @AllArgsConstructor
 @Entity
 @Data
+@Table(name = "contact")
 public class ContactEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
    // Integer secondary;
     String email;
@@ -30,20 +31,32 @@ public class ContactEntity {
         LinkedId = null;
     }
 
-    /*boolean checkIfexist(Integer primary, String email, String phone)
-    {
-        return false;
-    }
+
     public String getEmail() {
         return email;
     }
 
-    public List<String> getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public String getPrimaryContact()
-    {
-        return email.get(0);
-    }*/
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 }
