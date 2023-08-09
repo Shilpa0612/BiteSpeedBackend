@@ -4,31 +4,41 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-
-@AllArgsConstructor
+//@AllArgsConstructor
 @Entity
 @Data
 @Table(name = "contact")
 public class Contact {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Integer id;
-   // Integer secondary;
+    @Column(name = "email")
     String email;
+    @Column(name = "phone")
     String phone;
-    Integer LinkedId;
+    @Column(name = "linkedId")
+    Integer linkedId;
+    @Column(name = "linkedPrecedence")
     String linkedPrecedence;
 
+    @OneToMany(mappedBy = "contactObj", cascade = CascadeType.ALL)
+            private List<Link> ob;
+
+    @Column(name = "createdAt")
     LocalDateTime createdAt;
+
+    @Column(name = "updatedAt")
     LocalDateTime updatedAt;
+    @Column(name = "deletedAt")
     LocalDateTime deletedAt;
 
     public Contact ()
     {
         deletedAt = null;
         linkedPrecedence = "primary";
-        LinkedId = null;
+        linkedId = null;
     }
 
 
@@ -58,5 +68,17 @@ public class Contact {
 
     public Integer getId() {
         return id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
     }
 }

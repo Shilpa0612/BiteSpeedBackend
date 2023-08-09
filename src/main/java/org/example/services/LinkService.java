@@ -26,7 +26,7 @@ public class LinkService {
     @Query(value ="Select * from link where id = :id")
     public List<Link> getAllLink(Integer id)
     {
-        return linkRepository.getAllLink(id);
+        return linkRepository.findByLinkedId(id);
     }
 
 

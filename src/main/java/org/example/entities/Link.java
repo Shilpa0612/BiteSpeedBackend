@@ -1,5 +1,6 @@
 package org.example.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,18 +25,18 @@ public class Link {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "linkedId", referencedColumnName = "id")
-    private Contact contact;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "linkedId", updatable = false,nullable = false)
+    @Column(name = "LinkedId", updatable = false, insertable = false)
     private Integer linkedId;//Foreign Key
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LinkedId", referencedColumnName = "id")
+    @JsonIgnore
+    private Contact contactObj;
+
+
     public Link()
     {
         email = new ArrayList<>();

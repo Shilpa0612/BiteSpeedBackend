@@ -10,15 +10,13 @@ import org.example.services.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
 @RestController
+@RequestMapping("/api")
 public class ContactLinkController {
     private final ContactService contactService;
     private final LinkService linkService;
@@ -106,24 +104,30 @@ public class ContactLinkController {
 
         List<String> emails = new ArrayList<>();
         List<String> phones = new ArrayList<>();
+        List<String> secondaryContact = new ArrayList<>();
         for(Link link : list)
         {
             if(link.getLinkedPrecedence().equalsIgnoreCase("primary")){
                 emails.add(link.getEmail().toString());
                 phones.add(link.getPhone().toString());
             }
+            if(link.getLinkedPrecedence().equalsIgnoreCase("secondary"))
+                secondaryContact.add(link.getLinkedId()+"");
         }
-        List<String> secondaryContact = list.stream()
+        /*List<String> secondaryContact = list.stream()
                 .filter(l -> l.getLinkedPrecedence().equalsIgnoreCase("secondary"))
                 .map(l ->String.valueOf(l.getLinkedId()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());*/
 
         Map<String, Object> responseMap = new LinkedHashMap<>();
         responseMap.put("contact", Map.of(
                 "primaryContactId", primaryId,
                 "email", emails,
                 "phoneNumber", phones,
-                "SecondaryIds", secondaryContact));
+                "SecondaryIds", secondaryContact,
+                "createdAt", contact.getCreatedAt(),
+                "updatedAt", contact.getUpdatedAt(),
+                "deletedAt", contact.getDeletedAt()));
 
         return mapper.writeValueAsString(responseMap);
     }

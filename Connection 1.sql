@@ -22,3 +22,7 @@ deletedAt datetime default null,
 foreign key(linkedId) references contact(id)
 );
 
+desc link;
+desc contact;
+Select * from contact;
+select * from link;
