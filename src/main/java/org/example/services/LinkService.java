@@ -23,7 +23,7 @@ public class LinkService {
         return linkRepository.save(linkEntity);
     }
 
-    @Query(value ="Select * from link where id = :id")
+    @Query(value ="Select * from link where id = :id", nativeQuery = true)
     public List<Link> getAllLink(Integer id)
     {
         return linkRepository.findByLinkedId(id);
