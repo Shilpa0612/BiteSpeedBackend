@@ -36,13 +36,4 @@ public class LinkService {
         return linkRepository.findByLinkedId(id);
     }
 
-    public Map<Integer, List<Link>> getAllLinksForContacts(List<Integer> contactIds) {
-        List<Link> links = linkRepository.findByLinkedIdIn(contactIds);
-
-        Map<Integer, List<Link>> linksByContactId = links.stream()
-                .collect(Collectors.groupingBy(Link::getLinkedId));
-
-        return linksByContactId;
-    }
-
 }

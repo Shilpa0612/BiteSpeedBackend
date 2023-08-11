@@ -5,22 +5,24 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Data
 @Table (name = "link")
 public class Link{
 
+    @Column(name = "linkedPrecedence")
     private String linkedPrecedence;
+    @Column(name = "createdAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime createdAt;
+    @Column(name = "updatedAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime updatedAt;
+    @Column(name = "deletedAt")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime deletedAt;
 
@@ -79,12 +81,12 @@ public class Link{
         return linkedPrecedence;
     }
 
-    public void setEmail(List<String> email) {
-        this.email = email;
+    public void setEmail(String email) {
+        this.email.add(email);
     }
 
-    public void setPhone(List<String> phone) {
-        this.phone = phone;
+    public void setPhone(String phone) {
+        this.phone.add(phone);
     }
 
     public List<String> getEmail() {
@@ -93,20 +95,6 @@ public class Link{
 
     public List<String> getPhone() {
         return phone;
-    }
-
-    @Override
-    public String toString() {
-        return "Link{" +
-                "id=" + id +
-                ", linkedId=" + linkedId +
-                ", createdAt=" + createdAt +
-                ", deletedAt=" + deletedAt +
-                ", linkedPrecedence='" + linkedPrecedence + '\'' +
-                ", updatedAt=" + updatedAt +
-                ", email=" + email.stream().collect(Collectors.joining(", ")) +
-                ", phone=" + phone.stream().collect(Collectors.joining(", ")) +
-                '}';
     }
 
 }

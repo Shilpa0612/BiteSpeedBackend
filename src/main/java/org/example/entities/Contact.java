@@ -4,12 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-//@AllArgsConstructor
 @Entity
 @Data
 @Table(name = "contact")
@@ -77,31 +74,4 @@ public class Contact{
         return id;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Contact{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", linkedId=" + linkedId +
-                ", linkedPrecedence='" + linkedPrecedence + '\'' +
-                ", ob=" + ob.stream().map(Link::toString).collect(Collectors.joining(", ")) +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", deletedAt=" + deletedAt +
-                '}';
-    }
-
-}
+ }
