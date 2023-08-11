@@ -10,30 +10,38 @@ import org.example.services.LinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
+
 @RestController
-@RequestMapping("/api")
+//@RequestMapping("/api/identify")
 public class ContactLinkController {
+    @Autowired
     private final ContactService contactService;
+    @Autowired
     private final LinkService linkService;
 
-    @Autowired
+   // @Autowired
     public ContactLinkController(ContactService contactService, LinkService linkService)
     {
         this.contactService = contactService;
         this.linkService = linkService;
     }
 
-  @PostMapping("/identify")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping
     public ResponseEntity<String> mapContact(@RequestBody ContactDTO contactDTO) throws JsonProcessingException {
 
-      String email = contactDTO.getEmail();
-      String phone = contactDTO.getPhone();
+      String email = contactDto.getEmail();
+      String phone = contactDto.getPhone();
 
+      System.out.println(email + " : "+ phone);
       boolean ifExists = contactService.returnIfIdExist(email, phone);
 
       if (ifExists) {
@@ -42,8 +50,8 @@ public class ContactLinkController {
 
           Link linkInstance = new Link();
           linkInstance.setLinkedId(id);
-          linkInstance.setCreatedAt(LocalDateTime.now());
-          linkInstance.setUpdatedAt(LocalDateTime.now());
+          linkInstance.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+          linkInstance.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
 
           List<Link> linkList = linkService.getAllLink(id);
           if (contactService.ifEmailExist(email)) {
@@ -73,17 +81,20 @@ public class ContactLinkController {
 
           Contact contactInstance = new Contact();
           contactInstance.setPhone(phone);
-          contactInstance.setCreatedAt(LocalDateTime.now());
-          contactInstance.setUpdatedAt(LocalDateTime.now());
+          contactInstance.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+          contactInstance.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
           contactInstance.setEmail(email);
-
-
-          contactService.saveOrUpdate(contactInstance);
+          contactService.saveOrCreate(contactInstance);
       }
 
-    //public List<LinkEntity> getAllContactsWithLink() throws JsonProcessingException {
+        //List<Contact> contactEntities = contactService.getMatchedContact()
+        List<Contact> contactEntities = new ArrayList<>();
+        contactEntities = contactService.getAllContacts();
 
-        List<Contact> contactEntities = contactService.getAllContacts();
+        List<Integer> contactIds = contactEntities.stream()
+                .map(Contact::getId)
+                .collect(Collectors.toList());
+        Map<Integer, List<Link>> linksByContactId = linkService.getAllLinksForContacts(contactIds);
 
         List<String> response = new ArrayList<>();
         ObjectMapper mapper = new ObjectMapper();
@@ -91,6 +102,7 @@ public class ContactLinkController {
         for(Contact c: contactEntities)
         {
             List<Link> linkEntities = linkService.getAllLink(c.getId());
+//            System.out.println("linkEntity: "+linkEntities.toString());
             String read = createResponse(c, linkEntities);
             response.add(read);
         }
@@ -130,5 +142,18 @@ public class ContactLinkController {
                 "deletedAt", contact.getDeletedAt()));
 
         return mapper.writeValueAsString(responseMap);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+        // Get the validation errors from the exception object
+        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+        // Create a list of error messages
+        List<String> errorMessages = new ArrayList<>();
+        for (FieldError fieldError : fieldErrors) {
+            errorMessages.add(fieldError.getField() + ": " + fieldError.getDefaultMessage());
+        }
+        // Return a response entity with status 400 and error messages
+        return new ResponseEntity<>(String.join(", ", errorMessages), HttpStatus.BAD_REQUEST);
     }
 }

@@ -1,26 +1,34 @@
 package org.example.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
 @Table (name = "link")
-public class Link {
+public class Link{
 
     private String linkedPrecedence;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime createdAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime deletedAt;
 
     @ElementCollection
+    @Column(name = "email", columnDefinition = "TEXT")
     private List<String> email;
     @ElementCollection
+    @Column(name = "phone", columnDefinition = "TEXT")
     private List<String> phone;
 
 
@@ -86,4 +94,19 @@ public class Link {
     public List<String> getPhone() {
         return phone;
     }
+
+    @Override
+    public String toString() {
+        return "Link{" +
+                "id=" + id +
+                ", linkedId=" + linkedId +
+                ", createdAt=" + createdAt +
+                ", deletedAt=" + deletedAt +
+                ", linkedPrecedence='" + linkedPrecedence + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", email=" + email.stream().collect(Collectors.joining(", ")) +
+                ", phone=" + phone.stream().collect(Collectors.joining(", ")) +
+                '}';
+    }
+
 }

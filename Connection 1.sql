@@ -25,4 +25,6 @@ foreign key(linkedId) references contact(id)
 desc link;
 desc contact;
 Select * from contact;
+Select count(*) from contact;
 select * from link;
+Select count(*) from link;

@@ -1,16 +1,19 @@
 package org.example.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //@AllArgsConstructor
 @Entity
 @Data
 @Table(name = "contact")
-public class Contact {
+public class Contact{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Integer id;
@@ -26,11 +29,15 @@ public class Contact {
     @OneToMany(mappedBy = "contactObj", cascade = CascadeType.ALL)
             private List<Link> ob;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     @Column(name = "createdAt")
     LocalDateTime createdAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     @Column(name = "updatedAt")
     LocalDateTime updatedAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     @Column(name = "deletedAt")
     LocalDateTime deletedAt;
 
@@ -81,4 +88,20 @@ public class Contact {
     public LocalDateTime getDeletedAt() {
         return deletedAt;
     }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", linkedId=" + linkedId +
+                ", linkedPrecedence='" + linkedPrecedence + '\'' +
+                ", ob=" + ob.stream().map(Link::toString).collect(Collectors.joining(", ")) +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", deletedAt=" + deletedAt +
+                '}';
+    }
+
 }
