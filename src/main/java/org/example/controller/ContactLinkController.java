@@ -32,35 +32,22 @@ public class ContactLinkController {
         this.linkService = linkService;
     }
 
+
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/identify")
     public ResponseEntity<String> mapContact(@RequestBody ContactDTO contactDTO) throws JsonProcessingException {
-
         String email = contactDTO.getEmail();
         String phone = contactDTO.getPhone();
-
         Contact existingContactByEmail = contactService.findByEmail(email);
         Contact existingContactByPhone = contactService.findByPhone(phone);
-
-        if (existingContactByEmail == null && existingContactByPhone == null) {
-            Contact newContact = new Contact();
-            newContact.setEmail(email);
-            newContact.setPhone(phone);
-            newContact.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
-            newContact.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
-            contactService.saveOrCreate(newContact);
-        }
-        else if (existingContactByEmail == null && existingContactByPhone != null) {
-            Contact newContact = new Contact();
-            newContact.setEmail(email);
-            newContact.setPhone(phone);
-            newContact.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
-            newContact.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
-            contactService.saveOrCreate(newContact);
-
+        Contact newContact = new Contact();
+        newContact.setEmail(email);
+        newContact.setPhone(phone);
+        newContact.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+        newContact.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+        if (existingContactByEmail != null) {
             Link link = new Link();
-            link.setLinkedId(existingContactByPhone.getId());
-            link.setLinkedId(newContact.getId());
+            link.setLinkedId(existingContactByEmail.getId());
             link.setEmail(email);
             link.setPhone(phone);
             link.setLinkedPrecedence("secondary");
@@ -68,17 +55,26 @@ public class ContactLinkController {
             link.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
             linkService.saveOrCreate(link);
         }
-
+        if (existingContactByPhone != null) {
+            Link link = new Link();
+            link.setLinkedId(existingContactByPhone.getId());
+            link.setEmail(email);
+            link.setPhone(phone);
+            link.setLinkedPrecedence("secondary");
+            link.setCreatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+            link.setUpdatedAt(LocalDateTime.now(ZoneId.of("UTC")));
+            linkService.saveOrCreate(link);
+        }
+        if (existingContactByEmail == null && existingContactByPhone == null) {
+            contactService.saveOrCreate(newContact);
+        }
         Contact primaryContact = (existingContactByEmail != null) ? existingContactByEmail : contactService.findByPhone(phone);
         List<Link> linkEntities = linkService.getAllLink(primaryContact.getId());
-
         List<String> emails = new ArrayList<>();
         List<String> phones = new ArrayList<>();
         List<Integer> secondaryContactIds = new ArrayList<>();
-
         emails.add(primaryContact.getEmail().toString());
         phones.add(primaryContact.getPhone().toString());
-
         for (Link link : linkEntities) {
             if (link.getLinkedPrecedence().equalsIgnoreCase("secondary")) {
                 secondaryContactIds.add(link.getLinkedId());
@@ -86,18 +82,11 @@ public class ContactLinkController {
                 phones.add(link.getPhone().toString());
             }
         }
-
         Map<String, Object> responseMap = new LinkedHashMap<>();
-        responseMap.put("contact", Map.of(
-                "primaryContactId", primaryContact.getId(),
-                "emails", emails,
-                "phoneNumbers", phones,
-                "secondaryContactIds", secondaryContactIds
-        ));
-
+        responseMap.put("contact", Map.of("primaryContactId", primaryContact.getId(),
+                "emails", emails, "phoneNumbers", phones, "secondaryContactIds", secondaryContactIds));
         ObjectMapper mapper = new ObjectMapper();
         String jsonResponse = mapper.writeValueAsString(responseMap);
-
         return new ResponseEntity<>(jsonResponse, HttpStatus.OK);
     }
 

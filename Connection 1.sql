@@ -1,4 +1,4 @@
-use userdetails;
+/*use userdetails;
 show tables;
 create table contact(
 id int primary key,
@@ -38,7 +38,7 @@ alter table contact drop column linked_precedence;
 alter table contact
 drop column createdAt,
 drop column deletedAt,
-drop column updatedAt,
+drop column updatedAt;
 drop column linked;
 
 alter table link
@@ -92,4 +92,9 @@ WHERE REFERENCED_TABLE_NAME = 'link'
 SELECT CONSTRAINT_NAME
 FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 WHERE TABLE_NAME = 'link'
-  AND COLUMN_NAME = 'linkedId';
+  AND COLUMN_NAME = 'linkedId';*/
+
+DELETE FROM LINK;
+DELETE FROM CONTACT;
+select * from link;
+select * from contact;
