@@ -30,10 +30,28 @@ public class LinkService {
         return linkRepository.save(linkEntity);
     }
 
-    @Query(value ="Select * from link where id = :id", nativeQuery = true)
+    @Query(value ="Select * from link where linked_id = :id", nativeQuery = true)
     public List<Link> getAllLink(Integer id)
     {
-        return linkRepository.findByLinkedId(id);
+        return linkRepository.findAllByLinkedId(id);
     }
 
+    public Boolean ifLinkedIdExists(Integer linkedId)
+    {
+        return linkRepository.existsByLinkedId(linkedId);
+    }
+
+    public Link findByLinkedId(Integer linkedId)
+    {
+        return linkRepository.findByLinkedId(linkedId);
+    }
+
+    public Link findByEmail(String email){
+        return linkRepository.findByEmail(email);
+    }
+
+
+    public Link findByPhone(String phone){
+        return linkRepository.findByEmail(phone);
+    }
 }

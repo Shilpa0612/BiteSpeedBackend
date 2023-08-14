@@ -14,45 +14,46 @@ import java.util.List;
 @Table (name = "link")
 public class Link{
 
-    @Column(name = "linkedPrecedence")
+    @Column(name = "linked_precedence")
     private String linkedPrecedence;
-    @Column(name = "createdAt")
+    @Column(name = "created_at")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime createdAt;
-    @Column(name = "updatedAt")
+    @Column(name = "updated_at")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime updatedAt;
-    @Column(name = "deletedAt")
+    @Column(name = "deleted_at")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private LocalDateTime deletedAt;
 
-    @ElementCollection
+    //@ElementCollection
     @Column(name = "email", columnDefinition = "TEXT")
-    private List<String> email;
-    @ElementCollection
+    private String email;
+    //@ElementCollection
     @Column(name = "phone", columnDefinition = "TEXT")
-    private List<String> phone;
+    private String phone;
 
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Integer id;
 
-    @Column(name = "LinkedId", updatable = false, insertable = false)
+    @Column(name = "linked_id", updatable = false, insertable = false)
     private Integer linkedId;//Foreign Key
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "LinkedId", referencedColumnName = "id")
+    @JoinColumn(name = "linked_id", referencedColumnName = "id")
     @JsonIgnore
     private Contact contactObj;
 
 
     public Link()
     {
-        email = new ArrayList<>();
-        phone = new ArrayList<>();
+        //email = new ArrayList<>();
+        //phone = new ArrayList<>();
         linkedPrecedence = "secondary";
         deletedAt = null;
+        linkedId=-1;
     }
 
     public void setLinkedId(Integer linkedId) {
@@ -82,19 +83,24 @@ public class Link{
     }
 
     public void setEmail(String email) {
-        this.email.add(email);
+        StringBuffer s = new StringBuffer(this.email+" "+email);
+        this.email = s.toString();
     }
 
     public void setPhone(String phone) {
-        this.phone.add(phone);
+        StringBuffer s = new StringBuffer(this.phone+" "+phone);
+        this.phone = s.toString();
     }
 
-    public List<String> getEmail() {
+    public String getEmail() {
         return email;
     }
 
-    public List<String> getPhone() {
+    public String getPhone() {
         return phone;
     }
 
+    public Integer getId() {
+        return id;
+    }
 }
